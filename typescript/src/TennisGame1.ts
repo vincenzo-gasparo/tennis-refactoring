@@ -5,9 +5,17 @@ import { TennisGame } from "./TennisGame";
  * @property {string} name - This is the name of the player.
  * @property {number} score - number;
  */
-type Player = {
+class Player {
 	name: string;
-	score: number;
+	score: number
+	constructor(name: string){
+		this.name = name;
+		this.score = 0;
+	}
+	
+	increaseScore(){
+		this.score ++
+	}
 };
 
 /* It creates a new object with two properties, player1 and player2, and assigns them to the values of the
@@ -26,8 +34,8 @@ export class TennisGame1 implements TennisGame {
 	constructor(player1Name: string, player2Name: string) {
 		if (player1Name === player2Name)
 			throw new Error("Error: the names are identical");
-		this.player1 = { name: player1Name, score: 0 };
-		this.player2 = { name: player2Name, score: 0 };
+		this.player1 = new Player(player1Name)
+		this.player2 = new Player(player2Name)
 	}
 
 /**
@@ -37,10 +45,10 @@ export class TennisGame1 implements TennisGame {
  */
 	wonPoint(playerName: string): void {
 		if (this.player1.name === playerName) {
-			this.player1.score++;
+			this.player1.increaseScore();
 		}
 		if (this.player2.name === playerName) {
-			this.player2.score++;
+			this.player2.increaseScore();
 		}
 	}
 
