@@ -1,70 +1,88 @@
-import { TennisGame } from './TennisGame';
+import { TennisGame } from "./TennisGame";
 
+/**
+ * A Player is an object with a name property that is a string and a score property that is a number.
+ * @property {string} name - This is the name of the player.
+ * @property {number} score - number;
+ */
+type Player = {
+	name: string;
+	score: number;
+};
+
+/* It creates a new object with two properties, player1 and player2, and assigns them to the values of the
+arguments passed in */
 export class TennisGame1 implements TennisGame {
-  private m_score1: number = 0;
-  private m_score2: number = 0;
-  private player1Name: string;
-  private player2Name: string;
+	numberToStringPoints = ["Love", "Fifteen", "Thirty", "Forty"];
+	private player1: Player;
+	private player2: Player;
 
-  constructor(player1Name: string, player2Name: string) {
-    this.player1Name = player1Name;
-    this.player2Name = player2Name;
-  }
+/**
+ * It creates a new object with two properties, player1 and player2, and assigns them to the values of the
+ * arguments passed in
+ * @param {string} player1Name - string
+ * @param {string} player2Name - string
+ */
+	constructor(player1Name: string, player2Name: string) {
+		if (player1Name === player2Name)
+			throw new Error("Error: the names are identical");
+		this.player1 = { name: player1Name, score: 0 };
+		this.player2 = { name: player2Name, score: 0 };
+	}
 
-  wonPoint(playerName: string): void {
-    if (playerName === 'player1')
-      this.m_score1 += 1;
-    else
-      this.m_score2 += 1;
-  }
+/**
+ * If the playerName is the same as the name of the player in the player1 property, increment the score
+ * property of the player1 property.
+ * @param {string} playerName - string
+ */
+	wonPoint(playerName: string): void {
+		if (this.player1.name === playerName) {
+			this.player1.score++;
+		}
+		if (this.player2.name === playerName) {
+			this.player2.score++;
+		}
+	}
 
-  getScore(): string {
-    let score: string = '';
-    let tempScore: number = 0;
-    if (this.m_score1 === this.m_score2) {
-      switch (this.m_score1) {
-        case 0:
-          score = 'Love-All';
-          break;
-        case 1:
-          score = 'Fifteen-All';
-          break;
-        case 2:
-          score = 'Thirty-All';
-          break;
-        default:
-          score = 'Deuce';
-          break;
+/**
+ * If the score is 3 or greater, return Deuce, otherwise return the number of points followed by -All.
+ * @param {number} pScore - number - The score of the player
+ * @returns The score of the game.
+ */
+	getScoreForEqualPoints() {
+		if (this.player1.score >= 3) {
+			return "Deuce";
+		}
+		return `${this.numberToStringPoints[this.player1.score]}-All`;
+	}
 
-      }
-    }
-    else if (this.m_score1 >= 4 || this.m_score2 >= 4) {
-      const minusResult: number = this.m_score1 - this.m_score2;
-      if (minusResult === 1) score = 'Advantage player1';
-      else if (minusResult === -1) score = 'Advantage player2';
-      else if (minusResult >= 2) score = 'Win for player1';
-      else score = 'Win for player2';
-    }
-    else {
-      for (let i = 1; i < 3; i++) {
-        if (i === 1) tempScore = this.m_score1;
-        else { score += '-'; tempScore = this.m_score2; }
-        switch (tempScore) {
-          case 0:
-            score += 'Love';
-            break;
-          case 1:
-            score += 'Fifteen';
-            break;
-          case 2:
-            score += 'Thirty';
-            break;
-          case 3:
-            score += 'Forty';
-            break;
-        }
-      }
-    }
-    return score;
-  }
+/**
+ * If the score is normal, return the score; if the score is a win, return the win; if the score is an
+ * advantage, return the advantage
+ * @returns The score of the game.
+ */
+	getScoreForDifferentPoints() {
+		// normal
+		if (this.player1.score < 4 && this.player2.score < 4) {
+			return `${this.numberToStringPoints[this.player1.score]}-${this.numberToStringPoints[this.player2.score]}`;
+		}
+		// win
+		if (Math.abs(this.player1.score - this.player2.score) >= 2) {
+			return `Win for player${this.player1.score > this.player2.score ? 1 : 2}`;
+		}
+		// advantage
+		return `Advantage player${this.player1.score > this.player2.score ? 1 : 2}`;
+	}
+
+/**
+ * If the players have equal points, return the score for equal points, otherwise return the score for
+ * different points.
+ * @returns The score of the game.
+ */
+	getScore(): string {
+		if (this.player1.score === this.player2.score) {
+			return this.getScoreForEqualPoints();
+		}
+		return this.getScoreForDifferentPoints();
+	}
 }
